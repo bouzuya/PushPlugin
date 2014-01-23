@@ -65,6 +65,7 @@ public class PushPlugin extends CordovaPlugin {
 				Log.v(TAG, "execute: ECB=" + gECB + " senderID=" + gSenderID);
 
 				GCMRegistrar.checkDevice(getApplicationContext());
+				GCMRegistrar.checkManifest(getApplicationContext());
 				GCMRegistrar.register(getApplicationContext(), gSenderID);
 				result = true;
 				callbackContext.success();
@@ -75,6 +76,11 @@ public class PushPlugin extends CordovaPlugin {
 			} catch (UnsupportedOperationException e) {
 				// GCMRegistrar.checkDevice throws UnsupportedOperationException.
 				Log.e(TAG, "execute: Got Unsupported Operation Exception " + e.getMessage());
+				result = false;
+				callbackContext.error(e.getMessage());
+			} catch (IllegalStateException e) {
+				// GCMRegistrar.checkManifest throws IllegalStateException.
+				Log.e(TAG, "execute: Got Illegal State Exception " + e.getMessage());
 				result = false;
 				callbackContext.error(e.getMessage());
 			}
