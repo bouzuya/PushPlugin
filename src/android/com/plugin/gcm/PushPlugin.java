@@ -64,11 +64,17 @@ public class PushPlugin extends CordovaPlugin {
 
 				Log.v(TAG, "execute: ECB=" + gECB + " senderID=" + gSenderID);
 
+				GCMRegistrar.checkDevice(getApplicationContext());
 				GCMRegistrar.register(getApplicationContext(), gSenderID);
 				result = true;
 				callbackContext.success();
 			} catch (JSONException e) {
 				Log.e(TAG, "execute: Got JSON Exception " + e.getMessage());
+				result = false;
+				callbackContext.error(e.getMessage());
+			} catch (UnsupportedOperationException e) {
+				// GCMRegistrar.checkDevice throws UnsupportedOperationException.
+				Log.e(TAG, "execute: Got Unsupported Operation Exception " + e.getMessage());
 				result = false;
 				callbackContext.error(e.getMessage());
 			}
